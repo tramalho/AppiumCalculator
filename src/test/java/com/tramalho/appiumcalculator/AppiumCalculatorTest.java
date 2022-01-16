@@ -1,16 +1,22 @@
 package com.tramalho.appiumcalculator;
 
+import static org.junit.Assert.assertEquals;
+
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class AppiumCalculatorTest {
 
-  private static AndroidDriver driver;
+  private AndroidDriver<MobileElement> driver;
 
-  public static void main(String[] args) throws MalformedURLException {
+  @Before
+  public void setUp() throws MalformedURLException {
     final DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     desiredCapabilities.setCapability("platformName", "android");
     desiredCapabilities.setCapability("deviceName", "emulator-5554");
@@ -21,19 +27,25 @@ public class AppiumCalculatorTest {
 
     final URL remoteUrl = new URL("http://localhost:4723/wd/hub");
 
-    driver = new AndroidDriver<MobileElement>(remoteUrl, desiredCapabilities);
-
-    sampleTest();
+    driver = new AndroidDriver<>(remoteUrl, desiredCapabilities);
   }
 
-  public static void sampleTest() {
-    MobileElement el1 = (MobileElement) driver.findElementById("com.android.calculator2:id/digit_2");
+  @After
+  public void tearDown() {
+    driver.quit();
+  }
+
+  @Test
+  public void shouldSum02Values() {
+    final MobileElement el1 = driver.findElementById("com.android.calculator2:id/digit_2");
     el1.click();
-    MobileElement el2 = (MobileElement) driver.findElementByAccessibilityId("plus");
+    final MobileElement el2 = driver.findElementByAccessibilityId("plus");
     el2.click();
-    MobileElement el3 = (MobileElement) driver.findElementById("com.android.calculator2:id/digit_3");
+    final MobileElement el3 = driver.findElementById("com.android.calculator2:id/digit_3");
     el3.click();
 
-    driver.quit();
+    final MobileElement el4 = driver.findElementById("com.android.calculator2:id/result");
+
+    assertEquals("5", el4.getText());
   }
 }
